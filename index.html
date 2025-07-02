@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>School Library Management</title>
+</head>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  background: #0b6ed1;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: rgb(3, 106, 138);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(121, 37, 37, 0.1);
+}
+
+h1, h2 {
+  text-align: center;
+  color: #333333;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+form input, form button {
+  flex: 1 1 30%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+form button {
+  background: #e48ad5;
+  color: rgb(45, 15, 128);
+  border: none;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #07afa1;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #62acb9;
+  text-align: left;
+}
+
+tr:hover {
+  background-color: #63065e;
+}
+
+.delete-btn {
+  background: rgb(129, 91, 91);
+  color: rgb(209, 208, 127);
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+</style>
+<body>
+  <div class="container">
+    <h1>School Library Management System</h1>
+    
+    <form id="bookForm">
+     <input type="text" id="title" placeholder="Book Title" required>
+      <input type="text" id="author" placeholder="Author" required>
+      <input type="text" id="isbn" placeholder="ISBN" required>
+      <button type="submit">Add Book</button>
+    </form>
+
+    <h2>Book List</h2>
+    <table id="bookList">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>ISBN</th>
+          <th>Action</th>
+        </tr>
+         <tr>
+          <td>Harry potter</td>
+          <td>J.K.Rowling</td>
+          <td>9780439554930</td>
+          <td>Issued</td>
+        </tr>
+         <tr>
+          <td>The jungle book</td>
+          <td>Rudyard kipling</td>
+          <td>9788171674607</td>
+          <td>Available</td>
+        </tr>
+         <tr>
+          <td>Msthematics Magic</td>
+          <td>R.D.Sharma </td>
+          <td>9789388704218</td>
+          <td>Returned</td>
+        </tr> <tr>
+          <td>Science Around Us</td>
+          <td>Dr.S.Bhattarai</td>
+          <td>9789937924721</td>
+          <td>Issued</td>
+        </tr>
+         <tr>
+          <td>My english grammar book</td>
+          <td>Kiran Publication</td>
+          <td>9788124326974</td>
+          <td>Available</td>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Load books from localStorage on page load
+document.addEventListener('DOMContentLoaded', displayBooks);
+
+// Form submit
+document.getElementById('bookForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const title = document.getElementById('title').value.trim();
+  const author = document.getElementById('author').value.trim();
+  const isbn = document.getElementById('isbn').value.trim();
+
+  if (title && author && isbn) {
+    const book = { title, author, isbn };
+    addBookToStorage(book);
+    addBookToTable(book);
+    this.reset();
+  }
+});
+
+// Add book to localStorage
+function addBookToStorage(book) {
+  const books = getBooks();
+  books.push(book);
+  localStorage.setItem('books', JSON.stringify(books));
+}
+
+// Get books from localStorage
+function getBooks() {
+  return localStorage.getItem('books') ? JSON.parse(localStorage.getItem('books')) : [];
+}
+
+// Display all books in table
+function displayBooks() {
+  const books = getBooks();
+  books.forEach(addBookToTable);
+}
+
+// Add book to HTML table
+function addBookToTable(book) {
+  const list = document.querySelector('#bookList tbody');
+  const row = document.createElement('tr');
+
+  row.innerHTML = `
+    <td>${book.title}</td>
+    <td>${book.author}</td>
+    <td>${book.isbn}</td>
+    <td><button class="delete-btn" onclick="deleteBook(this, '${book.isbn}')">Delete</button></td>
+  `;
+
+  list.appendChild(row);
+}
+
+// Delete book
+function deleteBook(btn, isbn) {
+  btn.closest('tr').remove();
+  let books = getBooks();
+  books = books.filter(book => book.isbn !== isbn);
+  localStorage.setItem('books', JSON.stringify(books));
+}
+
+  </script>
+</body>
+</html>
